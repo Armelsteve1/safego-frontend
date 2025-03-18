@@ -28,9 +28,8 @@ export default function Hero() {
 
   return (
     <div className="relative w-full h-[80vh] flex flex-col items-center justify-center text-white">
-      <div className="absolute inset-0 bg-[url('/images/hero-bg.jpg')] bg-cover bg-center opacity-80"></div>
+      <div className="absolute inset-0 bg-cover bg-center opacity-80"> </div>
       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent"></div>
-
       <div className="relative z-10 text-center px-6">
         <motion.h1
           className="text-5xl font-bold mb-4"

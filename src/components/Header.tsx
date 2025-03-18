@@ -12,11 +12,13 @@ import {
   FiChevronUp,
 } from "react-icons/fi";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false); // Simule une auth
-  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false); // État pour le menu utilisateur
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const router = useRouter();
 
   return (
     <header className="bg-white shadow-md">
@@ -70,12 +72,18 @@ export default function Header() {
                   </>
                 ) : (
                   <>
-                    <a href="/login" className="block py-2 px-3 hover:bg-gray-100">
+                    <button
+                      onClick={() => router.push("/auth/login")}
+                      className="block w-full text-left py-2 px-3 hover:bg-gray-100"
+                    >
                       Connexion
-                    </a>
-                    <a href="/register" className="block py-2 px-3 hover:bg-gray-100">
+                    </button>
+                    <button
+                      onClick={() => router.push("/auth/register")}
+                      className="block w-full text-left py-2 px-3 hover:bg-gray-100"
+                    >
                       Inscription
-                    </a>
+                    </button>
                   </>
                 )}
               </motion.div>
@@ -104,12 +112,18 @@ export default function Header() {
           </a>
           {!isAuthenticated && (
             <>
-              <a href="/login" className="block px-4 py-2 border-b hover:bg-gray-100">
+              <button
+                onClick={() => router.push("/auth/login")}
+                className="block w-full text-left px-4 py-2 border-b hover:bg-gray-100"
+              >
                 Connexion
-              </a>
-              <a href="/register" className="block px-4 py-2 border-b hover:bg-gray-100">
+              </button>
+              <button
+                onClick={() => router.push("/auth/register")}
+                className="block w-full text-left px-4 py-2 border-b hover:bg-gray-100"
+              >
                 Inscription
-              </a>
+              </button>
             </>
           )}
         </motion.nav>
