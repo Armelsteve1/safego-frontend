@@ -25,12 +25,12 @@ export default function VerifyEmail() {
     e.preventDefault();
     setLoading(true);
     setError("");
-
+    const username = email;
     try {
       const response = await fetch("http://localhost:3001/safego/auth/confirm-email", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, code }),
+        body: JSON.stringify({ username, code }),
       });
 
       if (!response.ok) {

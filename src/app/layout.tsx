@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import ReduxProvider from "@/redux/ReduxProvider";
+import { AuthProvider } from "@/context/authContext";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -13,8 +14,16 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr">
-      <body>
-        <ReduxProvider>{children}</ReduxProvider>
+      <head>
+        <link rel="icon" href="/favicon.png" sizes="32x32" type="image/png" />
+      </head>
+      <body className="antialiased bg-gray-50 text-gray-900">
+        <ReduxProvider>
+          <AuthProvider>
+            {" "}
+            <main className="min-h-screen">{children}</main>
+          </AuthProvider>
+        </ReduxProvider>
       </body>
     </html>
   );

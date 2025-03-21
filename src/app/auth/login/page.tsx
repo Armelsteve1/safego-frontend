@@ -6,9 +6,11 @@ import { motion } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { useAuth } from "@/context/authContext";
 
 export default function Login() {
   const router = useRouter();
+  const { dispatch } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -27,13 +29,31 @@ export default function Login() {
       });
 
       if (!response.ok) {
-        throw new Error("Échec de l'authentification. Vérifiez vos identifiants.");
+        const errorMessage = (await response.json()).message || "Échec de l'authentification.";
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();
-      localStorage.setItem("token", data.accessToken);
 
-      router.back();
+      localStorage.setItem("token", data.accessToken);
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          email: data.email,
+          groups: data.groups || [],
+        })
+      );
+
+      dispatch({
+        type: "LOGIN",
+        payload: {
+          email: data.email,
+          token: data.accessToken,
+          groups: data.groups || [],
+        },
+      });
+
+      router.push("/");
     } catch (err: any) {
       setError(err.message);
     } finally {
