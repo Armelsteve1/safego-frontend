@@ -10,7 +10,11 @@ module.exports = {
         background: "#f5f5f5",
         text: "#333333",
         error: "#FF3B30",
+        neutral: "#A0A0A0",
+        input: "#ffffff",
+        lightHover: "#eaf4ff",
       },
+
       backgroundImage: {
         "gradient-primary": "linear-gradient(90deg, #5de0e6, #004aad)",
       },

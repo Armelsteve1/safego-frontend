@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import NotificationPopup from "@/components/ui/NotificationPopup";
+import Header from "./Header";
 
 interface TripFormData {
   departure: string;
@@ -91,101 +92,106 @@ export default function PublishTrip() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-        className="bg-white p-8 rounded-lg shadow-lg w-full max-w-2xl border border-gray-200"
-      >
-        <h2 className="text-3xl font-bold text-center text-[#004aad]">Publier un trajet</h2>
-        <p className="text-center text-gray-600 mb-6">Proposez un trajet à la communauté SafeGo.</p>
+    <div className="h-screen flex flex-col">
+      <Header />
+      <div className="flex items-center justify-center min-h-screen bg-gray-100 px-3">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="bg-white p-8 rounded-lg shadow-lg w-full max-w-2xl border border-gray-200"
+        >
+          <h2 className="text-3xl font-bold text-center text-[#004aad]">Publier un trajet</h2>
+          <p className="text-center text-gray-600 mb-6">
+            Proposez un trajet à la communauté SafeGo.
+          </p>
 
-        {notification && (
-          <NotificationPopup
-            message={notification.message}
-            type={notification.type}
-            onClose={() => setNotification(null)}
-          />
-        )}
+          {notification && (
+            <NotificationPopup
+              message={notification.message}
+              type={notification.type}
+              onClose={() => setNotification(null)}
+            />
+          )}
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <Input
-              placeholder="Départ"
-              {...register("departure", { required: "Ce champ est requis" })}
-            />
-            <Input
-              placeholder="Arrivée"
-              {...register("arrival", { required: "Ce champ est requis" })}
-            />
-          </div>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <Input
+                placeholder="Départ"
+                {...register("departure", { required: "Ce champ est requis" })}
+              />
+              <Input
+                placeholder="Arrivée"
+                {...register("arrival", { required: "Ce champ est requis" })}
+              />
+            </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <Input
-              type="date"
-              {...register("departureDate", { required: "Ce champ est requis" })}
-            />
-            <Input
-              type="time"
-              {...register("departureTime", { required: "Ce champ est requis" })}
-            />
-          </div>
+            <div className="grid grid-cols-2 gap-4">
+              <Input
+                type="date"
+                {...register("departureDate", { required: "Ce champ est requis" })}
+              />
+              <Input
+                type="time"
+                {...register("departureTime", { required: "Ce champ est requis" })}
+              />
+            </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <Input
-              type="number"
-              min="1"
-              placeholder="Nombre de places"
-              {...register("seatsAvailable", { required: "Ce champ est requis" })}
-            />
-            <Input
-              type="number"
-              step="500"
-              min="0"
-              placeholder="Prix (en FCFA)"
-              {...register("price", { required: "Ce champ est requis" })}
-            />
-          </div>
+            <div className="grid grid-cols-2 gap-4">
+              <Input
+                type="number"
+                min="1"
+                placeholder="Nombre de places"
+                {...register("seatsAvailable", { required: "Ce champ est requis" })}
+              />
+              <Input
+                type="number"
+                step="500"
+                min="0"
+                placeholder="Prix (en FCFA)"
+                {...register("price", { required: "Ce champ est requis" })}
+              />
+            </div>
 
-          <div>
-            <label className="block text-gray-700">Choisir un véhicule</label>
-            <select
-              {...register("vehicleId", { required: "Sélectionnez un véhicule" })}
-              className="w-full border border-gray-300 rounded-lg p-2"
-              onChange={(e) => {
-                if (e.target.value === "new") {
-                  router.push("/vehicules");
-                }
-              }}
+            <div>
+              <label className="block text-gray-700">Choisir un véhicule</label>
+              <select
+                {...register("vehicleId", { required: "Sélectionnez un véhicule" })}
+                className="w-full border border-gray-300 rounded-lg p-2"
+                onChange={(e) => {
+                  if (e.target.value === "new") {
+                    router.push("/vehicules");
+                  }
+                }}
+              >
+                <option value="">Sélectionner</option>
+                {vehicles.length > 0 &&
+                  vehicles.map((vehicle) => (
+                    <option key={vehicle.id} value={vehicle.id}>
+                      {vehicle.name} ({vehicle.registrationNumber})
+                    </option>
+                  ))}
+                <option value="new">🚗 Ajouter un nouveau véhicule</option>
+              </select>
+            </div>
+
+            <Button
+              type="submit"
+              className="w-full bg-[#004aad] text-white hover:bg-[#003580] transition"
+              disabled={loading}
             >
-              <option value="">Sélectionner</option>
-              {vehicles.length > 0 &&
-                vehicles.map((vehicle) => (
-                  <option key={vehicle.id} value={vehicle.id}>
-                    {vehicle.name} ({vehicle.registrationNumber})
-                  </option>
-                ))}
-              <option value="new">🚗 Ajouter un nouveau véhicule</option>
-            </select>
-          </div>
+              {loading ? "Publication en cours..." : "Publier le trajet"}
+            </Button>
 
-          <Button
-            type="submit"
-            className="w-full bg-[#004aad] text-white hover:bg-[#003580] transition"
-            disabled={loading}
-          >
-            {loading ? "Publication en cours..." : "Publier le trajet"}
-          </Button>
-
-          <Button
-            className="w-full mt-4 bg-gray-600 text-white hover:bg-gray-500 transition"
-            onClick={() => router.push("/")}
-          >
-            Retour à l'accueil
-          </Button>
-        </form>
-      </motion.div>
+            <Button
+              className="w-full mt-4 bg-gray-600 text-white hover:bg-gray-500 transition"
+              onClick={() => router.push("/")}
+            >
+              Retour à l'accueil
+            </Button>
+          </form>
+        </motion.div>
+      </div>
     </div>
   );
 }

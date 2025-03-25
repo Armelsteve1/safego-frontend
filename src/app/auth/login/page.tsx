@@ -52,7 +52,8 @@ export default function Login() {
           groups: data.groups || [],
         },
       });
-
+      const expirationTime = new Date().getTime() + 60 * 60 * 1000;
+      localStorage.setItem("tokenExpiration", expirationTime.toString());
       router.push("/");
     } catch (err: any) {
       setError(err.message);

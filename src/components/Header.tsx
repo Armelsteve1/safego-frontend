@@ -34,29 +34,32 @@ export default function Header() {
   return (
     <header className="bg-white shadow-md">
       <div className="container mx-auto flex justify-between items-center p-4">
+        {/* Logo */}
         <div className="flex items-center cursor-pointer" onClick={() => router.push("/")}>
           <Image src="/logoSafego.png" alt="SafeGo Logo" width={190} height={40} />
         </div>
 
-        <div className="hidden md:flex items-center gap-6 text-[#919191] font-medium ml-auto">
+        {/* Navigation principale */}
+        <div className="hidden md:flex items-center gap-6 text-neutral font-medium ml-auto">
           <button
             onClick={() => router.push("/search-results")}
-            className="flex items-center gap-2 hover:text-black transition"
+            className="flex items-center gap-2 hover:text-primary transition"
           >
             <FiSearch size={20} /> Recherche
           </button>
 
           <button
             onClick={() => router.push("/trips")}
-            className="flex items-center gap-2 hover:text-black transition"
+            className="flex items-center gap-2 hover:text-primary transition"
           >
             <FiPlusCircle size={20} /> Publier un trajet
           </button>
 
+          {/* Menu utilisateur */}
           <div className="relative">
             <button
               onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-              className="flex items-center gap-2 bg-gray-200 text-black px-4 py-2 rounded-full"
+              className="flex items-center gap-2 bg-[linear-gradient(90deg,_#5de0e6,_#004aad)] text-white px-4 py-2 rounded-full hover:opacity-90 transition"
             >
               <FiUser size={18} />
               {isUserMenuOpen ? <FiChevronUp size={18} /> : <FiChevronDown size={18} />}
@@ -71,17 +74,17 @@ export default function Header() {
               >
                 {state.isAuthenticated ? (
                   <>
-                    <p className="text-gray-700 font-medium px-3">{state.user?.email}</p>
+                    <p className="text-text font-medium px-3">{state.user?.email}</p>
                     <hr className="my-2" />
                     <button
                       onClick={() => router.push("/profile")}
-                      className="block w-full text-left py-2 px-3 hover:bg-gray-100 flex items-center gap-2"
+                      className="block w-full text-left py-2 px-3 hover:bg-background flex items-center gap-2"
                     >
                       <FiUser size={18} /> Profil
                     </button>
                     <button
                       onClick={() => router.push("/trips")}
-                      className="block w-full text-left py-2 px-3 hover:bg-gray-100 flex items-center gap-2"
+                      className="block w-full text-left py-2 px-3 hover:bg-background flex items-center gap-2"
                     >
                       <FiMenu size={18} /> Mes trajets
                     </button>
@@ -89,7 +92,7 @@ export default function Header() {
                     {isAdmin && (
                       <button
                         onClick={() => router.push("/admin")}
-                        className="block w-full text-left py-2 px-3 hover:bg-gray-100 flex items-center gap-2"
+                        className="block w-full text-left py-2 px-3 hover:bg-background flex items-center gap-2"
                       >
                         <FiSettings size={18} /> Panneau Admin
                       </button>
@@ -97,7 +100,7 @@ export default function Header() {
 
                     <button
                       onClick={handleLogout}
-                      className="block w-full text-left py-2 px-3 hover:bg-red-100 text-red-600 flex items-center gap-2"
+                      className="block w-full text-left py-2 px-3 hover:bg-red-100 text-error flex items-center gap-2"
                     >
                       <FiLogOut size={18} /> Déconnexion
                     </button>
@@ -106,13 +109,13 @@ export default function Header() {
                   <>
                     <button
                       onClick={() => router.push("/auth/login")}
-                      className="block w-full text-left py-2 px-3 hover:bg-gray-100 flex items-center gap-2"
+                      className="block w-full text-left py-2 px-3 hover:bg-background flex items-center gap-2"
                     >
                       <FiLogIn size={18} /> Connexion
                     </button>
                     <button
                       onClick={() => router.push("/auth/register")}
-                      className="block w-full text-left py-2 px-3 hover:bg-gray-100 flex items-center gap-2"
+                      className="block w-full text-left py-2 px-3 hover:bg-background flex items-center gap-2"
                     >
                       <FiUser size={18} /> Inscription
                     </button>
@@ -122,7 +125,7 @@ export default function Header() {
             )}
           </div>
         </div>
-        <button className="md:hidden text-gray-700" onClick={() => setIsOpen(!isOpen)}>
+        <button className="md:hidden text-neutral" onClick={() => setIsOpen(!isOpen)}>
           {isOpen ? <FiX size={28} /> : <FiMenu size={28} />}
         </button>
       </div>
@@ -133,13 +136,13 @@ export default function Header() {
           exit={{ opacity: 0, y: -10 }}
           className="md:hidden absolute top-16 left-0 w-full bg-white shadow-md z-50"
         >
-          <div className="flex flex-col items-center gap-4 p-4">
+          <div className="flex flex-col items-center gap-4 p-4 text-text">
             <button
               onClick={() => {
                 router.push("/search-results");
                 setIsOpen(false);
               }}
-              className="flex items-center gap-2 text-gray-700 hover:text-black transition"
+              className="flex items-center gap-2 hover:text-primary transition"
             >
               <FiSearch size={20} /> Recherche
             </button>
@@ -149,7 +152,7 @@ export default function Header() {
                 router.push("/trips");
                 setIsOpen(false);
               }}
-              className="flex items-center gap-2 text-gray-700 hover:text-black transition"
+              className="flex items-center gap-2 hover:text-primary transition"
             >
               <FiPlusCircle size={20} /> Publier un trajet
             </button>
@@ -161,24 +164,26 @@ export default function Header() {
                     router.push("/profile");
                     setIsOpen(false);
                   }}
-                  className="flex items-center gap-2 text-gray-700 hover:text-black transition"
+                  className="flex items-center gap-2 hover:text-primary transition"
                 >
                   <FiUser size={20} /> Profil
                 </button>
+
                 {isAdmin && (
                   <button
                     onClick={() => {
                       router.push("/admin");
                       setIsOpen(false);
                     }}
-                    className="flex items-center gap-2 text-gray-700 hover:text-black transition"
+                    className="flex items-center gap-2 hover:text-primary transition"
                   >
                     <FiSettings size={20} /> Admin Panel
                   </button>
                 )}
+
                 <button
                   onClick={handleLogout}
-                  className="flex items-center gap-2 text-red-600 hover:text-red-800 transition"
+                  className="flex items-center gap-2 text-error hover:text-red-800 transition"
                 >
                   <FiLogOut size={20} /> Déconnexion
                 </button>
@@ -186,22 +191,16 @@ export default function Header() {
             ) : (
               <>
                 <button
-                  onClick={() => {
-                    router.push("/auth/login");
-                    setIsOpen(false);
-                  }}
-                  className="flex items-center gap-2 text-gray-700 hover:text-black transition"
+                  onClick={() => router.push("/auth/login")}
+                  className="block w-full text-left py-2 px-3 hover:bg-lightHover flex items-center gap-2"
                 >
-                  <FiLogIn size={20} /> Connexion
+                  <FiLogIn size={18} /> Connexion
                 </button>
                 <button
-                  onClick={() => {
-                    router.push("/auth/register");
-                    setIsOpen(false);
-                  }}
-                  className="flex items-center gap-2 text-gray-700 hover:text-black transition"
+                  onClick={() => router.push("/auth/register")}
+                  className="block w-full text-left py-2 px-3 hover:bg-lightHover flex items-center gap-2"
                 >
-                  <FiUser size={20} /> Inscription
+                  <FiUser size={18} /> Inscription
                 </button>
               </>
             )}

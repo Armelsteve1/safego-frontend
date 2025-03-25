@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useReducer, useContext, ReactNode, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 interface AuthState {
   user: null | {
@@ -9,7 +9,7 @@ interface AuthState {
     agencyName?: string;
     givenName?: string;
     picture?: string;
-    groups: string[]; // ✅ Ajout des rôles (Admin, Driver, etc.)
+    groups: string[];
   };
   isAuthenticated: boolean;
   token: string | null;
@@ -78,6 +78,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const pathname = usePathname();
+
+  const protectedRoutes = ["/profile", "/admin"];
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
@@ -86,17 +89,26 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (storedToken && storedUser) {
       try {
         const user = JSON.parse(storedUser);
-        dispatch({
-          type: "LOGIN",
-          payload: {
-            email: user.email,
-            agencyName: user.agencyName,
-            givenName: user.givenName,
-            picture: user.picture,
-            groups: user.groups || [],
-            token: storedToken,
-          },
-        });
+
+        const tokenExpiration = localStorage.getItem("tokenExpiration");
+        if (tokenExpiration && new Date().getTime() > parseInt(tokenExpiration)) {
+          dispatch({ type: "LOGOUT" });
+          if (protectedRoutes.some((route) => pathname.startsWith(route))) {
+            router.push("/auth/login");
+          }
+        } else {
+          dispatch({
+            type: "LOGIN",
+            payload: {
+              email: user.email,
+              agencyName: user.agencyName,
+              givenName: user.givenName,
+              picture: user.picture,
+              groups: user.groups || [],
+              token: storedToken,
+            },
+          });
+        }
       } catch (error) {
         console.error("Erreur de parsing JSON", error);
         localStorage.removeItem("token");
@@ -105,7 +117,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
 
     setLoading(false);
-  }, []);
+  }, [pathname]);
 
   if (loading) return null;
 
