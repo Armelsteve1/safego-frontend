@@ -4,39 +4,12 @@ import { useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import SearchBar from "@/components/SearchBar";
-import { FiClock, FiTrendingDown, FiMapPin, FiUser, FiTruck } from "react-icons/fi";
-import Image from "next/image";
-import { FaIdCard } from "react-icons/fa";
 import TripCard from "@/components/TripCard";
 import SortFilter from "@/components/SortFilter";
-
-interface vehicule {
-  id: string;
-  name: string;
-  type: string;
-  capacity: number;
-  registrationNumber: string;
-  description: string;
-  images: string | null;
-}
-
-interface Trip {
-  id: string;
-  departure: string;
-  arrival: string;
-  departureDate: string;
-  departureTime: string;
-  seatsAvailable: number;
-  driverName: string;
-  rating?: number;
-  driverProfilePicture: string | null;
-  price: number;
-  status: string;
-  createdById: string;
-  createdAt: string;
-  tripType: "covoiturage" | "agence";
-  vehicule: vehicule;
-}
+import TripTypeSelector from "@/components/TripTypeSelector";
+import MobileSearchBar from "@/components/MobileSearchBar";
+import { Trip } from "@/types/trip";
+import useIsMobile from "@/hooks/useIsMobile";
 
 export default function SearchResults() {
   const searchParams = useSearchParams();
@@ -49,6 +22,10 @@ export default function SearchResults() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedTripType, setSelectedTripType] = useState<string | null>(null);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const isMobile = useIsMobile();
+  console.log("isMobile:", isMobile);
 
   useEffect(() => {
     const fetchTrips = async () => {
@@ -86,74 +63,124 @@ export default function SearchResults() {
     agence: trips.filter((trip) => trip.tripType === "agence").length,
     covoiturage: trips.filter((trip) => trip.tripType === "covoiturage").length,
   };
+  console.log("isSearchOpen:", isSearchOpen);
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      <div className="w-full bg-white shadow-md py-4 px-4 sm:px-10 sticky top-[64px] z-40 flex justify-center">
+      <MobileSearchBar
+        departure={departure}
+        arrival={arrival}
+        departureDate={departureDate}
+        passengers={passengers}
+        onOpenFilter={() => setIsFilterOpen(true)}
+        onOpenSearch={() => setIsSearchOpen(true)}
+      />
+      <div className="hidden lg:flex w-full bg-white shadow-md py-4 px-4 sm:px-10 sticky top-[64px] z-40 justify-center">
         <div className="w-full max-w-4xl">
+          <SearchBar
+            initialDeparture={departure}
+            initialArrival={arrival}
+            initialDate={departureDate}
+            onSearchDone={() => setIsSearchOpen(false)}
+          />
+        </div>
+      </div>
+
+      {isMobile && isSearchOpen && (
+        <div className="fixed inset-0 z-50 bg-white overflow-y-auto p-6">
+          <div className="flex justify-end mb-4">
+            <button
+              className="text-sm text-primary font-semibold"
+              onClick={() => setIsSearchOpen(false)}
+            >
+              ✕ Fermer
+            </button>
+          </div>
           <SearchBar
             initialDeparture={departure}
             initialArrival={arrival}
             initialDate={departureDate}
           />
         </div>
-      </div>
-      <div className="mt-10 px-6 grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
-        <SortFilter
-          trips={trips}
-          onSortChange={(sortType) => console.log("Tri sélectionné :", sortType)}
-          onTimeFilterChange={(timeRanges) =>
-            console.log("Plages horaires sélectionnées :", timeRanges)
-          }
-          onTrustFilterChange={(trustFilters) =>
-            console.log("Filtres de confiance :", trustFilters)
-          }
+      )}
+
+      <div className="pt-4 px-4 sm:px-6 space-y-6 max-w-7xl mx-auto">
+        <TripTypeSelector
+          selected={selectedTripType}
+          onChange={setSelectedTripType}
+          counts={tripCounts}
         />
 
-        <div className="lg:col-span-2 flex flex-col gap-6">
-          <div className="bg-white shadow-md py-4 px-6 sm:px-10 rounded-lg flex justify-between items-center">
-            <div className="text-lg font-semibold">Type de voyage</div>
-            <div className="flex items-center gap-6">
-              <button
-                className={`flex items-center gap-2 text-gray-700 ${
-                  !selectedTripType ? "font-bold border-b-2 border-gray-700" : ""
-                }`}
-                onClick={() => setSelectedTripType(null)}
-              >
-                Tout • {tripCounts.total}
-              </button>
-              <button
-                className={`flex items-center gap-2 text-gray-700 ${
-                  selectedTripType === "agence" ? "font-bold border-b-2 border-gray-700" : ""
-                }`}
-                onClick={() => setSelectedTripType("agence")}
-              >
-                <FiTruck size={18} /> Agence • {tripCounts.agence}
-              </button>
-              <button
-                className={`flex items-center gap-2 text-gray-700 ${
-                  selectedTripType === "covoiturage" ? "font-bold border-b-2 border-gray-700" : ""
-                }`}
-                onClick={() => setSelectedTripType("covoiturage")}
-              >
-                <FaIdCard size={18} /> Covoiturage • {tripCounts.covoiturage}
-              </button>
-            </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="hidden lg:block">
+            <SortFilter
+              trips={trips}
+              onSortChange={(sortType) => console.log("Tri sélectionné :", sortType)}
+              onTimeFilterChange={(timeRanges) =>
+                console.log("Plages horaires sélectionnées :", timeRanges)
+              }
+              onTrustFilterChange={(trustFilters) =>
+                console.log("Filtres de confiance :", trustFilters)
+              }
+            />
           </div>
-          <div className="space-y-6">
-            <h2 className="text-xl font-bold">
-              {loading ? "Chargement..." : `${filteredTrips.length} trajets disponibles`}
-            </h2>
-            {error && <p className="text-red-500">{error}</p>}
-            {!loading && filteredTrips.length === 0 && <p>Aucun trajet trouvé.</p>}
 
-            {filteredTripsWithDriver.map((trip) => (
-              <TripCard key={trip.id} trip={trip} passengers={passengers} />
-            ))}
+          <div className="lg:col-span-2 flex flex-col gap-6">
+            <div className="space-y-6">
+              {error && <p className="text-red-500">{error}</p>}
+              {!loading && filteredTrips.length === 0 && (
+                <div className="flex flex-col items-center justify-center text-center text-gray-500 py-12">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-16 w-16 mb-4 text-primary"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                      d="M16 8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8M21 21L15 15M11 13C8.23858 13 6 10.7614 6 8C6 5.23858 8.23858 3 11 3C13.7614 3 16 5.23858 16 8C16 10.7614 13.7614 13 11 13Z"
+                    />
+                  </svg>
+                  <h3 className="text-lg font-semibold mb-2">Aucun trajet trouvé</h3>
+                  <p className="text-sm">
+                    Essayez de modifier votre lieu de départ, d’arrivée ou la date du trajet.
+                  </p>
+                </div>
+              )}
+
+              {filteredTripsWithDriver.map((trip) => (
+                <TripCard key={trip.id} trip={trip} passengers={passengers} />
+              ))}
+            </div>
           </div>
         </div>
       </div>
+      {isFilterOpen && (
+        <div className="lg:hidden fixed inset-0 z-50 bg-white overflow-y-auto p-6">
+          <div className="flex justify-end mb-4">
+            <button
+              className="text-sm text-primary font-semibold"
+              onClick={() => setIsFilterOpen(false)}
+            >
+              Fermer
+            </button>
+          </div>
+          <SortFilter
+            trips={trips}
+            onSortChange={(sortType) => console.log("Tri sélectionné :", sortType)}
+            onTimeFilterChange={(timeRanges) =>
+              console.log("Plages horaires sélectionnées :", timeRanges)
+            }
+            onTrustFilterChange={(trustFilters) =>
+              console.log("Filtres de confiance :", trustFilters)
+            }
+          />
+        </div>
+      )}
     </div>
   );
 }

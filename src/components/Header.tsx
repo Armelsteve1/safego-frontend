@@ -34,12 +34,9 @@ export default function Header() {
   return (
     <header className="bg-white shadow-md">
       <div className="container mx-auto flex justify-between items-center p-4">
-        {/* Logo */}
         <div className="flex items-center cursor-pointer" onClick={() => router.push("/")}>
           <Image src="/logoSafego.png" alt="SafeGo Logo" width={190} height={40} />
         </div>
-
-        {/* Navigation principale */}
         <div className="hidden md:flex items-center gap-6 text-neutral font-medium ml-auto">
           <button
             onClick={() => router.push("/search-results")}
@@ -54,8 +51,6 @@ export default function Header() {
           >
             <FiPlusCircle size={20} /> Publier un trajet
           </button>
-
-          {/* Menu utilisateur */}
           <div className="relative">
             <button
               onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
