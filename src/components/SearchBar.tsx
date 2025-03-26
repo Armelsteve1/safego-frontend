@@ -10,12 +10,14 @@ interface SearchBarProps {
   initialDeparture?: string;
   initialArrival?: string;
   initialDate?: string;
+  onSearchDone?: () => void;
 }
 
 export default function SearchBar({
   initialDeparture = "",
   initialArrival = "",
-  initialDate = new Date().toISOString().split("T")[0],
+  initialDate = "",
+  onSearchDone,
 }: SearchBarProps) {
   const router = useRouter();
   const [departure, setDeparture] = useState(initialDeparture);
@@ -24,13 +26,9 @@ export default function SearchBar({
   const [passengers, setPassengers] = useState(1);
 
   const handleSearch = () => {
-    if (!departure || !destination) {
-      alert("Veuillez renseigner un départ et une destination.");
-      return;
-    }
-
+    if (onSearchDone) onSearchDone();
     router.push(
-      `/search-results?departure=${departure}&arrival=${destination}&departureDate=${date}&seatsAvailable=${passengers}`
+      `/search-results?departure=${encodeURIComponent(departure)}&arrival=${encodeURIComponent(destination)}&departureDate=${date}&seatsAvailable=${passengers}`
     );
   };
 
@@ -67,18 +65,35 @@ export default function SearchBar({
       </div>
       <div className="flex items-center gap-2">
         <FiUser className="text-[#919191]" />
-        <select
-          value={passengers}
-          onChange={(e) => setPassengers(Number(e.target.value))}
-          className="px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#919191]"
-        >
-          {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
-            <option key={num} value={num}>
-              {num} {num > 1 ? "passagers" : "passager"}
-            </option>
-          ))}
-        </select>
+        <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden">
+          <button
+            type="button"
+            onClick={() => setPassengers(Math.max(1, passengers - 1))}
+            className="px-3 py-2 text-gray-600 hover:bg-gray-100"
+          >
+            -
+          </button>
+          <input
+            type="number"
+            min={1}
+            max={99}
+            value={passengers}
+            onChange={(e) => {
+              const value = Number(e.target.value);
+              if (!isNaN(value) && value >= 1) setPassengers(value);
+            }}
+            className="w-12 text-center outline-none px-2 py-2"
+          />
+          <button
+            type="button"
+            onClick={() => setPassengers(passengers + 1)}
+            className="px-3 py-2 text-gray-600 hover:bg-gray-100"
+          >
+            +
+          </button>
+        </div>
       </div>
+
       <Button
         onClick={handleSearch}
         className="bg-[#919191] text-white px-6 py-2 rounded-lg hover:bg-[#000000] transition flex items-center gap-2"
