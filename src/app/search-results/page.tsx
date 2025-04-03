@@ -25,7 +25,6 @@ export default function SearchResults() {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const isMobile = useIsMobile();
-  console.log("isMobile:", isMobile);
 
   useEffect(() => {
     const fetchTrips = async () => {
@@ -63,7 +62,6 @@ export default function SearchResults() {
     agence: trips.filter((trip) => trip.tripType === "agence").length,
     covoiturage: trips.filter((trip) => trip.tripType === "covoiturage").length,
   };
-  console.log("isSearchOpen:", isSearchOpen);
 
   return (
     <div className="min-h-screen bg-gray-50">

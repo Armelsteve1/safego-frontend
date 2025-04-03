@@ -80,7 +80,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
   const pathname = usePathname();
 
-  const protectedRoutes = ["/profile", "/admin"];
+  const protectedRoutes = ["/profile", "/admin", "/my-trips"];
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
