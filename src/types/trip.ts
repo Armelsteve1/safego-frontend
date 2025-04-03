@@ -1,4 +1,4 @@
-export interface Vehicule {
+export interface Vehicle {
   id: string;
   name: string;
   type: string;
@@ -6,6 +6,7 @@ export interface Vehicule {
   registrationNumber: string;
   description: string;
   images: string | null;
+  category: string;
 }
 
 export interface Trip {
@@ -23,7 +24,7 @@ export interface Trip {
   createdById: string;
   createdAt: string;
   tripType: "covoiturage" | "agence";
-  vehicule: Vehicule;
+  vehicle: Vehicle;
 }
 
 export interface TripTypeSelectorProps {

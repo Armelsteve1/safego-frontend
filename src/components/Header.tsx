@@ -32,7 +32,7 @@ export default function Header() {
   const isAdmin = state.user?.groups?.some((group) => group.toLowerCase() === "admin");
 
   return (
-    <header className="bg-white shadow-md">
+    <header className="bg-white shadow-md  top-0 left-0 right-0 z-50 ">
       <div className="container mx-auto flex justify-between items-center p-4">
         <div className="flex items-center cursor-pointer" onClick={() => router.push("/")}>
           <Image src="/logoSafego.png" alt="SafeGo Logo" width={190} height={40} />
@@ -78,7 +78,7 @@ export default function Header() {
                       <FiUser size={18} /> Profil
                     </button>
                     <button
-                      onClick={() => router.push("/trips")}
+                      onClick={() => router.push("/my-trips")}
                       className="block w-full text-left py-2 px-3 hover:bg-background flex items-center gap-2"
                     >
                       <FiMenu size={18} /> Mes trajets
@@ -162,6 +162,12 @@ export default function Header() {
                   className="flex items-center gap-2 hover:text-primary transition"
                 >
                   <FiUser size={20} /> Profil
+                </button>
+                <button
+                  onClick={() => router.push("/my-trips")}
+                  className="flex items-center gap-2 hover:text-primary transition"
+                >
+                  <FiMenu size={18} /> Mes trajets
                 </button>
 
                 {isAdmin && (
