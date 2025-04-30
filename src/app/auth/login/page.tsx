@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useAuth } from "@/context/authContext";
-
+import { FiEye, FiEyeOff } from "react-icons/fi";
 export default function Login() {
   const router = useRouter();
   const { dispatch } = useAuth();
@@ -15,6 +15,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -92,13 +93,22 @@ export default function Login() {
           </div>
           <div>
             <label className="block text-gray-700">Mot de passe</label>
-            <Input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="w-full"
-            />
+            <div className="relative">
+              <Input
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="w-full pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-3 text-gray-600"
+              >
+                {showPassword ? <FiEyeOff /> : <FiEye />}
+              </button>
+            </div>
           </div>
           <Button
             type="submit"
