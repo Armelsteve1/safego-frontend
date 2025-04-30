@@ -17,7 +17,8 @@ import {
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/authContext";
-
+// todo fix header to result-seach page
+// todo fix header to result-seach page
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);

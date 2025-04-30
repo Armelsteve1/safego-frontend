@@ -116,7 +116,6 @@ export default function Register() {
               className="w-full"
             />
           </div>
-
           <div>
             <label className="block text-gray-700">Mot de passe</label>
             <div className="relative">
@@ -136,7 +135,6 @@ export default function Register() {
               </button>
             </div>
           </div>
-
           <div className="text-sm text-gray-600">
             <p className={passwordStrength.lengthValid ? "text-green-600" : "text-red-600"}>
               {passwordStrength.lengthValid ? "✔" : "✖"} Minimum 8 caractères
