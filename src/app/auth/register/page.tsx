@@ -92,7 +92,7 @@ export default function Register() {
         className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full border border-gray-200"
       >
         <div className="flex justify-center mb-6">
-          <Image src="/logoSafego.png" alt="SafeGo Logo" width={120} height={120} />
+          <Image src="/logosafego.png" alt="SafeGo Logo" width={120} height={120} />
         </div>
 
         <h2 className="text-2xl font-bold text-center text-[#004aad]">Inscription</h2>

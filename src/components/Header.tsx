@@ -36,7 +36,7 @@ export default function Header() {
     <header className="bg-white shadow-md  top-0 left-0 right-0 z-50 ">
       <div className="container mx-auto flex justify-between items-center p-4">
         <div className="flex items-center cursor-pointer" onClick={() => router.push("/")}>
-          <Image src="/logoSafego.png" alt="SafeGo Logo" width={190} height={40} />
+          <Image src="/logosafego.png" alt="SafeGo Logo" width={190} height={40} />
         </div>
         <div className="hidden md:flex items-center gap-6 text-neutral font-medium ml-auto">
           <button
