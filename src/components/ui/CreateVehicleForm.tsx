@@ -126,7 +126,11 @@ export default function CreateVehicleForm({ onVehicleAdded }: CreateVehicleFormP
             <label className="block text-gray-700">Capacité (nombre de places)</label>
             <Input
               type="number"
-              {...register("capacity", { required: "Ce champ est requis" })}
+              {...register("capacity", {
+                required: "Ce champ est requis",
+                min: { value: 1, message: "Minimum 1 place" },
+                valueAsNumber: true,
+              })}
               className="w-full"
             />
             {errors.capacity && <p className="text-red-500">{errors.capacity.message}</p>}
