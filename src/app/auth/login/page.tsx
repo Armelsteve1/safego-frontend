@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useAuth } from "@/context/authContext";
 import { FiEye, FiEyeOff } from "react-icons/fi";
+import { apiFetch } from "@/lib/api"; // ✅ import ici
+
 export default function Login() {
   const router = useRouter();
   const { dispatch } = useAuth();
@@ -23,18 +25,10 @@ export default function Login() {
     setError("");
 
     try {
-      const response = await fetch("http://localhost:3001/safego/auth/login", {
+      const data = await apiFetch("/auth/login", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-
-      if (!response.ok) {
-        const errorMessage = (await response.json()).message || "Échec de l'authentification.";
-        throw new Error(errorMessage);
-      }
-
-      const data = await response.json();
 
       localStorage.setItem("token", data.accessToken);
       localStorage.setItem(
@@ -53,6 +47,7 @@ export default function Login() {
           groups: data.groups || [],
         },
       });
+
       const expirationTime = new Date().getTime() + 60 * 60 * 1000;
       localStorage.setItem("tokenExpiration", expirationTime.toString());
       router.push("/");

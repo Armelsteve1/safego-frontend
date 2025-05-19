@@ -6,6 +6,7 @@ import { useAuth } from "@/context/authContext";
 import Header from "./Header";
 import NotificationPopup from "@/components/ui/NotificationPopup";
 import { useFetchProfile } from "@/hooks/useFetchProfile";
+import { apiFetchWithAuth } from "@/lib/api";
 
 const Profile = () => {
   const { state } = useAuth();
@@ -35,17 +36,10 @@ const Profile = () => {
     try {
       const { picture, email, username, ...updatableFields } = editableProfile;
 
-      const res = await fetch("http://localhost:3001/safego/auth/profile/update", {
+      await apiFetchWithAuth("/auth/profile/update", state.token as string, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${state.token}`,
-        },
         body: JSON.stringify(updatableFields),
       });
-
-      if (!res.ok) throw new Error("Erreur lors de la mise à jour");
-
       setNotification({ type: "success", message: "Profil mis à jour avec succès !" });
     } catch (err) {
       setNotification({ type: "error", message: "Impossible de mettre à jour le profil" });
@@ -62,7 +56,7 @@ const Profile = () => {
     formData.append("picture", file);
 
     try {
-      const res = await fetch("http://localhost:3001/safego/auth/profile/picture", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/profile/picture`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${state.token}`,

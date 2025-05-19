@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { apiFetch } from "@/lib/api";
 
 export default function VerifyEmail() {
   const searchParams = useSearchParams();
@@ -26,16 +27,12 @@ export default function VerifyEmail() {
     setLoading(true);
     setError("");
     const username = email;
+
     try {
-      const response = await fetch("http://localhost:3001/safego/auth/confirm-email", {
+      await apiFetch("/auth/confirm-email", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, code }),
       });
-
-      if (!response.ok) {
-        throw new Error("Échec de la validation. Vérifiez le code.");
-      }
 
       router.push("/auth/login");
     } catch (err: any) {

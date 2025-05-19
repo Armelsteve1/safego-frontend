@@ -6,6 +6,7 @@ import { Trip } from "@/types/trip";
 import { useEffect, useState } from "react";
 import NotificationPopup from "@/components/ui/NotificationPopup";
 import Header from "./Header";
+import { apiFetchWithAuth } from "@/lib/api"; // ✅ Import ajouté
 
 const MyTrips = () => {
   const { profile, loading: profileLoading } = useFetchProfile();
@@ -25,17 +26,9 @@ const MyTrips = () => {
 
       try {
         setLoadingTrips(true);
-        const res = await fetch(`http://localhost:3001/safego/trips/user/${profile.sub}`, {
+        const data = await apiFetchWithAuth(`/trips/user/${profile.sub}`, state.token as string, {
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${state.token}`,
-            Accept: "application/json",
-          },
         });
-
-        if (!res.ok) throw new Error("Erreur lors de la récupération des voyages");
-
-        const data = await res.json();
         setTrips(data);
       } catch (error) {
         console.error("Erreur fetch trips:", error);
@@ -51,15 +44,9 @@ const MyTrips = () => {
     if (!deletingTrip) return;
 
     try {
-      const res = await fetch(`http://localhost:3001/safego/trips/delete/${deletingTrip.id}`, {
+      await apiFetchWithAuth(`/trips/delete/${deletingTrip.id}`, state.token as string, {
         method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${state.token}`,
-        },
       });
-
-      if (!res.ok) throw new Error("Erreur lors de la suppression");
-
       setTrips(trips.filter((trip) => trip.id !== deletingTrip.id));
       setNotification({ message: "Trajet supprimé avec succès !", type: "success" });
       setDeletingTrip(null);
@@ -74,17 +61,10 @@ const MyTrips = () => {
     if (!editingTrip) return;
 
     try {
-      const res = await fetch(`http://localhost:3001/safego/trips/${editingTrip.id}`, {
+      await apiFetchWithAuth(`/trips/${editingTrip.id}`, state.token as string, {
         method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${state.token}`,
-        },
         body: JSON.stringify(editingTrip),
       });
-
-      if (!res.ok) throw new Error("Erreur lors de la mise à jour");
-
       setTrips(trips.map((trip) => (trip.id === editingTrip.id ? editingTrip : trip)));
       setEditingTrip(null);
       setNotification({ message: "Trajet mis à jour avec succès !", type: "success" });
@@ -106,7 +86,6 @@ const MyTrips = () => {
         {trips.length > 1 ? "s" : ""}.
       </p>
       <div className="p-6 max-w-4xl mx-auto bg-white shadow-lg rounded-lg">
-        {/* Notification Popup */}
         {notification && (
           <NotificationPopup
             message={notification.message}
@@ -123,14 +102,11 @@ const MyTrips = () => {
                 className="p-4 bg-gray-100 rounded-lg shadow-md flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center"
               >
                 <div className="flex items-center gap-4">
-                  {/* Image du conducteur */}
                   <img
                     src={trip.driverProfilePicture || "/default-avatar.png"}
                     alt="Driver"
                     className="w-16 h-16 rounded-full border"
                   />
-
-                  {/* Détails du voyage */}
                   <div>
                     <p className="text-lg font-medium text-gray-800">
                       {trip.departure} → {trip.arrival}
@@ -148,7 +124,6 @@ const MyTrips = () => {
                   </div>
                 </div>
 
-                {/* Statut, prix et actions */}
                 <div className="flex flex-col gap-2 text-right">
                   <p className="text-blue-600 font-semibold">{trip.price} FCFA</p>
                   <p

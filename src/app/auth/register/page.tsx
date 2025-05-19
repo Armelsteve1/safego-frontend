@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { FiEye, FiEyeOff } from "react-icons/fi";
-
+import { apiFetch } from "@/lib/api";
 const checkPasswordStrength = (password: string) => {
   const lengthValid = password.length >= 8;
   const hasUpperCase = /[A-Z]/.test(password);
@@ -70,15 +70,10 @@ export default function Register() {
         ...(role === "agency" && { agencyName }),
       };
 
-      const response = await fetch("http://localhost:3001/safego/auth/register", {
+      await apiFetch("/auth/register", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
-
-      if (!response.ok) {
-        throw new Error("Échec de l'inscription. Vérifiez vos informations.");
-      }
 
       router.push(`/auth/verify-email?email=${encodeURIComponent(email)}`);
     } catch (err: any) {
