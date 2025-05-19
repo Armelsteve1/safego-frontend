@@ -60,13 +60,12 @@ export default function CreateVehicleForm({ onVehicleAdded }: CreateVehicleFormP
     formData.append("type", data.type);
     formData.append("category", data.category);
     if (data.image instanceof File) {
-      formData.append("image", data.image);
+      formData.append("file", data.image);
     }
 
     try {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("Token manquant");
-
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/vehicules/create`, {
         method: "POST",
         headers: {
