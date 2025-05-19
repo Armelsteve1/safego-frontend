@@ -54,33 +54,43 @@ export default function PublishTrip() {
   }, []);
 
   const onSubmit = async (data: TripFormData) => {
-    if (data.vehicleId === "new") {
-      return router.push("/vehicules");
-    }
+  if (data.vehicleId === "new") {
+    return router.push("/vehicules");
+  }
 
-    setLoading(true);
-    setError("");
+  setLoading(true);
+  setError("");
+  // TODO revove arrivalTime from payload
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) throw new Error("Token manquant");
+    const payload = {
+      ...data,
+      seatsAvailable: Number(data.seatsAvailable),
+      price: Number(data.price),
+      arrivalTime: "12:00",
+    };
+    await apiFetchWithAuth("/trips", token, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
 
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) throw new Error("Token manquant");
+    setNotification({
+      message: "Trajet publié avec succès ! En attente de validation.",
+      type: "success",
+    });
 
-      await apiFetchWithAuth("/trips", token, {
-        method: "POST",
-        body: JSON.stringify(data),
-      });
+    router.push("/trips");
+  } catch (err: any) {
+    setNotification({ message: err.message, type: "error" });
+  } finally {
+    setLoading(false);
+  }
+};
 
-      setNotification({
-        message: "Trajet publié avec succès ! En attente de validation.",
-        type: "success",
-      });
-      router.push("/trips");
-    } catch (err: any) {
-      setNotification({ message: err.message, type: "error" });
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div className="h-screen flex flex-col">

@@ -20,7 +20,6 @@ const Profile = () => {
   } | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
-  // Met à jour le profil éditable dès que le profil chargé change
   useEffect(() => {
     if (profile) {
       setEditableProfile(profile);
