@@ -22,14 +22,12 @@ interface TripFormData {
   vehicleId: string;
 }
 
-
 export default function PublishTrip() {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<TripFormData>();
-
   const [vehicles, setVehicles] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [notification, setNotification] = useState<{
@@ -37,7 +35,6 @@ export default function PublishTrip() {
     type: "success" | "error";
   } | null>(null);
   const router = useRouter();
-
   useEffect(() => {
     async function fetchVehicles() {
       try {
@@ -49,7 +46,6 @@ export default function PublishTrip() {
         console.error(err.message);
       }
     }
-
     fetchVehicles();
   }, []);
 
@@ -60,24 +56,26 @@ export default function PublishTrip() {
     try {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("Token manquant");
-
       const payload = {
-        ...data,
+        departure: data.departure,
+        arrival: data.arrival,
+        departureDate: data.departureDate,
+        departureTime: data.departureTime,
+        arrivalTime: data.arrivalTime,
+        tripDuration: data.tripDuration,
         seatsAvailable: Number(data.seatsAvailable),
         price: Number(data.price),
+        vehicleId: data.vehicleId,
       };
-
       await apiFetchWithAuth("/trips", token, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-
       setNotification({
         message: "Trajet publié avec succès ! En attente de validation.",
         type: "success",
       });
-
       router.push("/trips");
     } catch (err: any) {
       setNotification({ message: err.message, type: "error" });
@@ -85,7 +83,6 @@ export default function PublishTrip() {
       setLoading(false);
     }
   };
-
   return (
     <div className="h-screen flex flex-col">
       <Header />
