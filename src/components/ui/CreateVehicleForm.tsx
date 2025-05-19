@@ -54,7 +54,7 @@ export default function CreateVehicleForm({ onVehicleAdded }: CreateVehicleFormP
 
     const formData = new FormData();
     formData.append("name", data.name);
-    formData.append("capacity", data.capacity.toString());
+    formData.append("capacity", String(Number(data.capacity)));
     formData.append("registrationNumber", data.registrationNumber);
     formData.append("description", data.description || "");
     formData.append("type", data.type);
