@@ -20,6 +20,7 @@ interface TripFormData {
   seatsAvailable: number;
   price: number;
   vehicleId: string;
+  meetingPoint: string;
 }
 
 export default function PublishTrip() {
@@ -66,6 +67,7 @@ export default function PublishTrip() {
         seatsAvailable: Number(data.seatsAvailable),
         price: Number(data.price),
         vehicleId: data.vehicleId,
+        meetingPoint: "N/A",
       };
       await apiFetchWithAuth("/trips", token, {
         method: "POST",
@@ -156,8 +158,11 @@ export default function PublishTrip() {
                 placeholder="Prix (en FCFA)"
                 {...register("price", { required: "Ce champ est requis" })}
               />
+              <Input
+                placeholder="Point de rencontre"
+                {...register("meetingPoint", { required: "Ce champ est requis" })}
+              />
             </div>
-
             <div>
               <label className="block text-gray-700">Choisir un véhicule</label>
               <select
