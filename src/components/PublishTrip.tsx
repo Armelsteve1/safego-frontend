@@ -20,8 +20,8 @@ interface TripFormData {
   seatsAvailable: number;
   price: number;
   vehicleId: string;
-  meetingPoint: string;
 }
+
 
 export default function PublishTrip() {
   const {
@@ -133,15 +133,16 @@ export default function PublishTrip() {
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <Input
-                type="time"
-                placeholder="Heure d'arrivée"
-                {...register("arrivalTime", { required: "Ce champ est requis" })}
-              />
-              <Input
-                placeholder="Durée du trajet (ex: 3h)"
-                {...register("tripDuration", { required: "Ce champ est requis" })}
-              />
+             <Input
+              type="time"
+              placeholder="Heure d'arrivée"
+              {...register("arrivalTime", { required: "Ce champ est requis" })}
+            />
+
+            <Input
+              placeholder="Durée du trajet (ex: 2h30)"
+              {...register("tripDuration", { required: "Ce champ est requis" })}
+            />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -175,12 +176,6 @@ export default function PublishTrip() {
                 <option value="new">🚗 Ajouter un nouveau véhicule</option>
               </select>
             </div>
-
-            <Input
-              placeholder="Point de rencontre"
-              {...register("meetingPoint", { required: "Ce champ est requis" })}
-            />
-
             <Button
               type="submit"
               className="w-full bg-[#004aad] text-white hover:bg-[#003580] transition"
