@@ -12,7 +12,7 @@ export const useFetchProfile = () => {
       if (!state.token) return;
 
       try {
-        const res = await fetch("http://localhost:3001/safego/auth/profile", {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/profile`, {
           headers: {
             Authorization: `Bearer ${state.token}`,
           },

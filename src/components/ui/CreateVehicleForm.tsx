@@ -59,15 +59,18 @@ export default function CreateVehicleForm({ onVehicleAdded }: CreateVehicleFormP
     formData.append("description", data.description || "");
     formData.append("type", data.type);
     formData.append("category", data.category);
-    if (data.image) {
+    if (data.image instanceof File) {
       formData.append("image", data.image);
     }
 
     try {
-      const response = await fetch("http://localhost:3001/safego/vehicules/create", {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Token manquant");
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/vehicules/create`, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${token}`,
         },
         body: formData,
       });

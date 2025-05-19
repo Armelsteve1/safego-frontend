@@ -8,16 +8,16 @@ Welcome to the **SafeGo Frontend**, the client-side application of the SafeGo pl
 
 ## ⚙️ Tech Stack
 
-| Feature             | Tech                          |
-|---------------------|-------------------------------|
-| Framework           | Next.js (App Router)          |
-| Language            | TypeScript                    |
-| Styling             | TailwindCSS                   |
-| Forms & Validation  | React Hook Form + Zod         |
-| State Management    | Context API / URL Parameters  |
-| Code Style          | ESLint + Prettier             |
-| Build Tool          | Vite                          |
-| Deployment Target   | Vercel                        |
+| Feature            | Tech                         |
+| ------------------ | ---------------------------- |
+| Framework          | Next.js (App Router)         |
+| Language           | TypeScript                   |
+| Styling            | TailwindCSS                  |
+| Forms & Validation | React Hook Form + Zod        |
+| State Management   | Context API / URL Parameters |
+| Code Style         | ESLint + Prettier            |
+| Build Tool         | Vite                         |
+| Deployment Target  | Vercel                       |
 
 ---
 

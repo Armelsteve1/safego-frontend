@@ -7,6 +7,7 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import NotificationPopup from "@/components/ui/NotificationPopup";
 import AdminSidebar from "@/components/ui/AdminSidebar";
 import CollapsibleCard from "@/components/ui/CollapsibleCard";
+import { apiFetchWithAuth } from "@/lib/api";
 
 interface User {
   username: string;
@@ -51,24 +52,15 @@ export default function AdminDashboard() {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("Aucun token trouvé. Veuillez vous connecter.");
 
-      const urls = [
-        "http://localhost:3001/safego/admin/pending",
-        "http://localhost:3001/safego/vehicules/pending",
-        "http://localhost:3001/safego/trips",
-      ];
+      const [pendingUsers, pendingVehicles, allTrips] = await Promise.all([
+        apiFetchWithAuth("/admin/pending", token),
+        apiFetchWithAuth("/vehicules/pending", token),
+        apiFetchWithAuth("/trips", token),
+      ]);
 
-      const responses = await Promise.all(
-        urls.map((url) =>
-          fetch(url, { headers: { Authorization: `Bearer ${token}` } }).then((res) => {
-            if (!res.ok) throw new Error(`Erreur API ${url} - ${res.statusText}`);
-            return res.json();
-          })
-        )
-      );
-
-      setUsers(responses[0]);
-      setVehicles(responses[1]);
-      setTrips(responses[2]);
+      setUsers(pendingUsers);
+      setVehicles(pendingVehicles);
+      setTrips(allTrips);
     } catch (err) {
       console.error("❌ Erreur de chargement :", err);
     }
@@ -89,13 +81,10 @@ export default function AdminDashboard() {
   const validateItem = async (type: "users" | "vehicules" | "trips", id: string) => {
     try {
       const token = localStorage.getItem("token");
-
-      const response = await fetch(`http://localhost:3001/safego/${type}/validate/${id}`, {
+      if (!token) throw new Error("Token manquant");
+      await apiFetchWithAuth(`/${type}/validate/${id}`, token, {
         method: "PATCH",
-        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
       });
-
-      if (!response.ok) throw new Error(`Erreur lors de la validation du ${type}`);
 
       setNotification({ message: `${type} validé avec succès !`, type: "success" });
       fetchData();
@@ -140,6 +129,7 @@ export default function AdminDashboard() {
             getRowId={(row) => row.username}
           />
         </CollapsibleCard>
+
         <CollapsibleCard title="Véhicules en attente">
           <DataGrid
             rows={vehicles}

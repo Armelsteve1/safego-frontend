@@ -10,6 +10,7 @@ import TripTypeSelector from "@/components/TripTypeSelector";
 import MobileSearchBar from "@/components/MobileSearchBar";
 import { Trip } from "@/types/trip";
 import useIsMobile from "@/hooks/useIsMobile";
+import { apiFetch } from "@/lib/api";
 
 export default function SearchResults() {
   const searchParams = useSearchParams();
@@ -30,11 +31,9 @@ export default function SearchResults() {
     const fetchTrips = async () => {
       setLoading(true);
       try {
-        const response = await fetch(
-          `http://localhost:3001/safego/trips?departure=${departure}&arrival=${arrival}&departureDate=${departureDate}`
+        const data: Trip[] = await apiFetch(
+          `/trips?departure=${departure}&arrival=${arrival}&departureDate=${departureDate}`
         );
-        if (!response.ok) throw new Error("Erreur lors de la récupération des trajets");
-        const data: Trip[] = await response.json();
         setTrips(data);
       } catch (err) {
         setError((err as Error).message);

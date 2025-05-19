@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import NotificationPopup from "@/components/ui/NotificationPopup";
 import Header from "./Header";
+import { apiFetchWithAuth } from "@/lib/api"; // ✅ Import ajouté
 
 interface TripFormData {
   departure: string;
@@ -39,15 +40,10 @@ export default function PublishTrip() {
   useEffect(() => {
     async function fetchVehicles() {
       try {
-        const response = await fetch("http://localhost:3001/safego/vehicules/my-vehicules", {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        });
+        const token = localStorage.getItem("token");
+        if (!token) throw new Error("Token manquant");
 
-        if (!response.ok) {
-          throw new Error("Erreur lors du chargement des véhicules.");
-        }
-
-        const data = await response.json();
+        const data = await apiFetchWithAuth("/vehicules/my-vehicules", token);
         setVehicles(data);
       } catch (err: any) {
         setError(err.message);
@@ -66,18 +62,13 @@ export default function PublishTrip() {
     setError("");
 
     try {
-      const response = await fetch("http://localhost:3001/safego/trips", {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Token manquant");
+
+      await apiFetchWithAuth("/trips", token, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
         body: JSON.stringify(data),
       });
-
-      if (!response.ok) {
-        throw new Error("Échec de la publication du trajet.");
-      }
 
       setNotification({
         message: "Trajet publié avec succès ! En attente de validation.",
@@ -174,6 +165,11 @@ export default function PublishTrip() {
                 <option value="new">🚗 Ajouter un nouveau véhicule</option>
               </select>
             </div>
+
+            <Input
+              placeholder="Point de rencontre"
+              {...register("meetingPoint", { required: "Ce champ est requis" })}
+            />
 
             <Button
               type="submit"
