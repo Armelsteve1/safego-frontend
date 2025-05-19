@@ -8,13 +8,15 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import NotificationPopup from "@/components/ui/NotificationPopup";
 import Header from "./Header";
-import { apiFetchWithAuth } from "@/lib/api"; // ✅ Import ajouté
+import { apiFetchWithAuth } from "@/lib/api";
 
 interface TripFormData {
   departure: string;
   arrival: string;
   departureDate: string;
   departureTime: string;
+  arrivalTime: string;
+  tripDuration: string;
   seatsAvailable: number;
   price: number;
   vehicleId: string;
@@ -30,7 +32,6 @@ export default function PublishTrip() {
 
   const [vehicles, setVehicles] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
   const [notification, setNotification] = useState<{
     message: string;
     type: "success" | "error";
@@ -42,11 +43,10 @@ export default function PublishTrip() {
       try {
         const token = localStorage.getItem("token");
         if (!token) throw new Error("Token manquant");
-
         const data = await apiFetchWithAuth("/vehicules/my-vehicules", token);
         setVehicles(data);
       } catch (err: any) {
-        setError(err.message);
+        console.error(err.message);
       }
     }
 
@@ -54,43 +54,37 @@ export default function PublishTrip() {
   }, []);
 
   const onSubmit = async (data: TripFormData) => {
-  if (data.vehicleId === "new") {
-    return router.push("/vehicules");
-  }
+    if (data.vehicleId === "new") return router.push("/vehicules");
 
-  setLoading(true);
-  setError("");
-  // TODO revove arrivalTime from payload
-  try {
-    const token = localStorage.getItem("token");
-    if (!token) throw new Error("Token manquant");
-    const payload = {
-      ...data,
-      seatsAvailable: Number(data.seatsAvailable),
-      price: Number(data.price),
-      arrivalTime: "12:00",
-    };
-    await apiFetchWithAuth("/trips", token, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Token manquant");
 
-    setNotification({
-      message: "Trajet publié avec succès ! En attente de validation.",
-      type: "success",
-    });
+      const payload = {
+        ...data,
+        seatsAvailable: Number(data.seatsAvailable),
+        price: Number(data.price),
+      };
 
-    router.push("/trips");
-  } catch (err: any) {
-    setNotification({ message: err.message, type: "error" });
-  } finally {
-    setLoading(false);
-  }
-};
+      await apiFetchWithAuth("/trips", token, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
 
+      setNotification({
+        message: "Trajet publié avec succès ! En attente de validation.",
+        type: "success",
+      });
+
+      router.push("/trips");
+    } catch (err: any) {
+      setNotification({ message: err.message, type: "error" });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="h-screen flex flex-col">
@@ -140,6 +134,18 @@ export default function PublishTrip() {
 
             <div className="grid grid-cols-2 gap-4">
               <Input
+                type="time"
+                placeholder="Heure d'arrivée"
+                {...register("arrivalTime", { required: "Ce champ est requis" })}
+              />
+              <Input
+                placeholder="Durée du trajet (ex: 3h)"
+                {...register("tripDuration", { required: "Ce champ est requis" })}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <Input
                 type="number"
                 min="1"
                 placeholder="Nombre de places"
@@ -159,19 +165,13 @@ export default function PublishTrip() {
               <select
                 {...register("vehicleId", { required: "Sélectionnez un véhicule" })}
                 className="w-full border border-gray-300 rounded-lg p-2"
-                onChange={(e) => {
-                  if (e.target.value === "new") {
-                    router.push("/vehicules");
-                  }
-                }}
               >
                 <option value="">Sélectionner</option>
-                {vehicles.length > 0 &&
-                  vehicles.map((vehicle) => (
-                    <option key={vehicle.id} value={vehicle.id}>
-                      {vehicle.name} ({vehicle.registrationNumber})
-                    </option>
-                  ))}
+                {vehicles.map((vehicle) => (
+                  <option key={vehicle.id} value={vehicle.id}>
+                    {vehicle.name} ({vehicle.registrationNumber})
+                  </option>
+                ))}
                 <option value="new">🚗 Ajouter un nouveau véhicule</option>
               </select>
             </div>
